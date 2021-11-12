@@ -92,8 +92,8 @@ class Dataset(torch.utils.data.Dataset):
 
         # Our generate mask, squares + lines
         if self.mask_type == 3:
-            height, width = self.target_size
-
+            width = self.target_size
+            height = width
             h_s, w_s = random.randrange(height // 2), random.randrange(width // 2)
             h_d, w_d = random.randint(height // 4, height // 2), random.randint(width // 4, width // 2)
             h_e, w_e = h_s + h_d, w_s + w_d
