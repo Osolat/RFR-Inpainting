@@ -7,7 +7,6 @@ from torchvision.utils import save_image
 from modules.RFRNet import RFRNet, VGG16FeatureExtractor
 import os
 import time
-import matplotlib.pyplot as plt
 
 
 class RFRNetModel():
@@ -59,6 +58,9 @@ class RFRNetModel():
             for items in train_loader:
                 gt_images, masks = self.__cuda__(*items)
                 masked_images = gt_images * masks
+                print(gt_images.shape())
+                print(masks.shape())
+                print(masked_images.shape())
                 if image_save_path is not None and self.iter % 500 == 0:
                     masksView = torch.cat([masks], dim=1)
                     fake_B, mask = self.G(masked_images, masksView)
@@ -84,14 +86,14 @@ class RFRNetModel():
                     s_time = time.time()
                     self.l1_loss_val = 0.0
 
-                if self.iter % 40000 == 0:
+                if self.iter % 5000 == 0:
                     if not os.path.exists('{:s}'.format(save_path)):
                         os.makedirs('{:s}'.format(save_path))
                     save_ckpt('{:s}/g_{:d}.pth'.format(save_path, self.iter), [('generator', self.G)],
                               [('optimizer_G', self.optm_G)], self.iter)
         if not os.path.exists('{:s}'.format(save_path)):
             os.makedirs('{:s}'.format(save_path))
-            save_ckpt('{:s}/g_{:s}.pth'.format(save_path, "final"), [('generator', self.G)],
+            save_ckpt('{:s}/g_{:s}.pth'.format(save_path, self.iter), [('generator', self.G)],
                       [('optimizer_G', self.optm_G)], self.iter)
 
     def test(self, test_loader, result_save_path):
