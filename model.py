@@ -7,6 +7,7 @@ from torchvision.utils import save_image
 from modules.RFRNet import RFRNet, VGG16FeatureExtractor
 import os
 import time
+import matplotlib.pyplot as plt
 
 
 class RFRNetModel():
@@ -56,9 +57,10 @@ class RFRNetModel():
         s_time = time.time()
         while self.iter<iters:
             for items in train_loader:
-                print("I got here")
                 gt_images, masks = self.__cuda__(*items)
                 masked_images = gt_images * masks
+                plt.imshow(masked_images.view(256, 256, 1))
+                plt.show()
                 self.forward(masked_images, masks, gt_images)
                 self.update_parameters()
                 self.iter += 1

@@ -40,7 +40,7 @@ class Dataset(torch.utils.data.Dataset):
         return item
 
     def load_item(self, index):
-        print("I am here 1")
+        #print("I am here 1")
         img = imread(self.data[index])
         if self.training:
             img = self.resize(img)
@@ -48,7 +48,7 @@ class Dataset(torch.utils.data.Dataset):
             img = self.resize(img, True, True, True)
         # load mask
         mask = self.load_mask(img, index)
-        print("I am here 2")
+        #print("I am here 2")
 
         # augment data
         if self.training:
@@ -56,7 +56,7 @@ class Dataset(torch.utils.data.Dataset):
                 img = img[:, ::-1, ...]
             if self.augment and np.random.binomial(1, 0.5) > 0:
                 mask = mask[:, ::-1, ...]
-        print("I am here 3")
+        #print("I am here 3")
 
         return self.to_tensor(img), self.to_tensor(mask)
 
@@ -178,7 +178,7 @@ class Dataset(torch.utils.data.Dataset):
                     file_names.append("../../Dataset/Places2/train/data_256" + line.split(" ")[0])
                 return file_names
             if os.path.isdir(path):
-                path = list(glob.glob(path + '/*.jpg')) + list(glob.glob(path + '/*.png'))
+                path = list(glob.glob(path + '/*.jpg')) + list(glob.glob(path + '/*.png')) + list(glob.glob(path + '/*.JPEG')) + list(glob.glob(path + '/*.PNG'))
                 path.sort()
                 return path
             if os.path.isfile(path):
