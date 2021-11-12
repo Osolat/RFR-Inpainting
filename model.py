@@ -55,8 +55,8 @@ class RFRNetModel():
         print("Starting training from iteration:{:d}".format(self.iter))
         s_time = time.time()
         while self.iter<iters:
-            print("WTF IS THIS SHITE")
             for items in train_loader:
+                print("I GOT HERE?")
                 gt_images, masks = self.__cuda__(*items)
                 masked_images = gt_images * masks
                 print(gt_images)
