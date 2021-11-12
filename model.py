@@ -48,7 +48,7 @@ class RFRNetModel():
         else:
             self.device = torch.device("cpu")
         
-    def train(self, train_loader, save_path, finetune = False, iters=450000):
+    def train(self, train_loader, save_path, finetune = False, iters=450000, image_save_path):
     #    writer = SummaryWriter(log_dir="log_info")
         self.G.train(finetune = finetune)
         if finetune:
@@ -60,10 +60,19 @@ class RFRNetModel():
                 gt_images, masks = self.__cuda__(*items)
                 masked_images = gt_images * masks
                 masksView = torch.cat([masks] * 3, dim=1)
-                plt.imshow(masksView.view(256, 256, 1))
-                plt.show()
-                plt.imshow(gt_images.view(256, 256, 1))
-                plt.show()
+                fake_B, mask = self.G(masked_images, masksView)
+                comp_B = fake_B * (1 - masksView) + gt_images * masksView
+                if not os.path.exists('{:s}/results'.format(image_save_path)):
+                    os.makedirs('{:s}/results'.format(image_save_path))
+                for k in range(comp_B.size(0)):
+
+                    grid = make_grid(comp_B[k:k + 1])
+                    file_path = '{:s}/results/img_{:d}.png'.format(image_save_path, self.iter)
+                    save_image(grid, file_path)
+
+                    grid = make_grid(masked_images[k:k + 1] + 1 - masksView[k:k + 1])
+                    file_path = '{:s}/results/masked_img_{:d}.png'.format(image_save_path, self.iter)
+                    save_image(grid, file_path)
                 self.forward(masked_images, masks, gt_images)
                 self.update_parameters()
                 self.iter += 1
