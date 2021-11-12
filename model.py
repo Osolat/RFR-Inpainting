@@ -59,7 +59,7 @@ class RFRNetModel():
             for items in train_loader:
                 gt_images, masks = self.__cuda__(*items)
                 masked_images = gt_images * masks
-                if image_save_path is not None:
+                if image_save_path is not None & self.iter % 500 == 0:
                     masksView = torch.cat([masks] * 3, dim=1)
                     fake_B, mask = self.G(masked_images, masksView)
                     comp_B = fake_B * (1 - masksView) + gt_images * masksView
