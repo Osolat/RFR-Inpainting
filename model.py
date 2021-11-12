@@ -59,7 +59,8 @@ class RFRNetModel():
             for items in train_loader:
                 gt_images, masks = self.__cuda__(*items)
                 masked_images = gt_images * masks
-                plt.imshow(masks.view(256, 256, 1))
+                masksView = torch.cat([masks] * 3, dim=1)
+                plt.imshow(masksView.view(256, 256, 1))
                 plt.show()
                 plt.imshow(gt_images.view(256, 256, 1))
                 plt.show()
