@@ -9,7 +9,6 @@ from PIL import Image
 # from scipy.misc import imread
 from imageio import imread
 import cv2
-from random import *
 
 
 class Dataset(torch.utils.data.Dataset):
@@ -95,8 +94,8 @@ class Dataset(torch.utils.data.Dataset):
         if self.mask_type == 3:
             height, width = self.target_size
 
-            h_s, w_s = randrange(height // 2), randrange(width // 2)
-            h_d, w_d = randint(height // 4, height // 2), randint(width // 4, width // 2)
+            h_s, w_s = random.randrange(height // 2), random.randrange(width // 2)
+            h_d, w_d = random.randint(height // 4, height // 2), random.randint(width // 4, width // 2)
             h_e, w_e = h_s + h_d, w_s + w_d
             m = np.zeros((height, width), dtype=np.float32)
             m[h_s:h_e, w_s:w_e, :] = 255
