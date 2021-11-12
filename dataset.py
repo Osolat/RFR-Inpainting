@@ -160,10 +160,11 @@ class Dataset(torch.utils.data.Dataset):
                     w_start = random.randrange(0, i)
                     img = img[h_start:h_start + side, w_start:w_start + side, ...]
         # img = scipy.misc.imresize(img, [self.target_size, self.target_size])
-        print(img.shape)
         img = np.array(Image.fromarray(img).resize(size=(self.target_size, self.target_size)))
-        print(np.shape(img))
-        print(img.ndim)
+        if img.ndim == 2:
+            print("error")
+            img = np.concatenate([img, img, img], axis=2)
+            print(img.shape)
         return img
 
     def to_tensor(self, img):
