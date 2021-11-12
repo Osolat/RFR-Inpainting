@@ -97,7 +97,7 @@ class Dataset(torch.utils.data.Dataset):
             h_s, w_s = random.randrange(height // 2), random.randrange(width // 2)
             h_d, w_d = random.randint(height // 4, height // 2), random.randint(width // 4, width // 2)
             h_e, w_e = h_s + h_d, w_s + w_d
-            m = np.zeros((height, width), dtype=np.float32)
+            m = np.zeros((height, width, 1), dtype=np.float32)
             m[h_s:h_e, w_s:w_e] = 255
             for _ in range(np.random.randint(5, 10)):
                 # Get random x locations to start line
