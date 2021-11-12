@@ -162,9 +162,7 @@ class Dataset(torch.utils.data.Dataset):
         # img = scipy.misc.imresize(img, [self.target_size, self.target_size])
         img = np.array(Image.fromarray(img).resize(size=(self.target_size, self.target_size)))
         if img.ndim == 2:
-            print("error")
             img = np.stack((img,) * 3, axis=-1)
-            print(img.shape)
         return img
 
     def to_tensor(self, img):
