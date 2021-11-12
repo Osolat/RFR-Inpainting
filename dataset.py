@@ -163,7 +163,7 @@ class Dataset(torch.utils.data.Dataset):
         print(img.shape)
         img = np.array(Image.fromarray(img).resize(size=(self.target_size, self.target_size)))
         print(np.shape(img))
-
+        print(img.ndim)
         return img
 
     def to_tensor(self, img):
