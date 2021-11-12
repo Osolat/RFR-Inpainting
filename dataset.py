@@ -9,9 +9,11 @@ from PIL import Image
 # from scipy.misc import imread
 from imageio import imread
 import cv2
+from random import *
+
 
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, image_path, mask_path, mask_mode, target_size, augment=True, training=True, mask_reverse = False):
+    def __init__(self, image_path, mask_path, mask_mode, target_size, augment=True, training=True, mask_reverse=False):
         super(Dataset, self).__init__()
         self.augment = augment
         self.training = training
@@ -56,43 +58,72 @@ class Dataset(torch.utils.data.Dataset):
 
     def load_mask(self, img, index):
         imgh, imgw = img.shape[0:2]
-        
-        #external mask, random order
+
+        # external mask, random order
         if self.mask_type == 0:
             mask_index = random.randint(0, len(self.mask_data) - 1)
             mask = imread(self.mask_data[mask_index])
-            mask = (mask > 0).astype(np.uint8)       # threshold due to interpolation
+            mask = (mask > 0).astype(np.uint8)  # threshold due to interpolation
             mask = self.resize(mask, False)
             if self.mask_reverse:
                 return (1 - mask) * 255
             else:
                 return mask * 255
-        #generate random mask
+        # generate random mask
         if self.mask_type == 1:
             mask = 1 - generate_stroke_mask([self.target_size, self.target_size])
-            mask = (mask>0).astype(np.uint8)* 255
-            mask = self.resize(mask,False)
+            mask = (mask > 0).astype(np.uint8) * 255
+            mask = self.resize(mask, False)
             return mask
-        
-        #external mask, fixed order
+
+        # external mask, fixed order
         if self.mask_type == 2:
             mask_index = index
             mask = imread(self.mask_data[mask_index])
-            mask = (mask > 0).astype(np.uint8)       # threshold due to interpolation
+            mask = (mask > 0).astype(np.uint8)  # threshold due to interpolation
             mask = self.resize(mask, False)
             if self.mask_reverse:
                 return (1 - mask) * 255
             else:
                 return mask * 255
 
-    def resize(self, img, aspect_ratio_kept = True, fixed_size = False, centerCrop=False):
-        
+        # Our generate mask, squares + lines
+        if self.mask_type == 3:
+            height, width = self.target_size
+
+            h_s, w_s = randrange(height // 2), randrange(width // 2)
+            h_d, w_d = randint(height // 4, height // 2), randint(width // 4, width // 2)
+            h_e, w_e = h_s + h_d, w_s + w_d
+            m = np.zeros((height, width), dtype=np.float32)
+            m[h_s:h_e, w_s:w_e, :] = 255
+            for _ in range(np.random.randint(5, 10)):
+                # Get random x locations to start line
+
+                x1, x2 = np.random.randint(1, width), np.random.randint(1, width)
+
+                # Get random y locations to start line
+
+                y1, y2 = np.random.randint(1, height), np.random.randint(1, height)
+
+                # Get random thickness of the line drawn
+
+                thickness = np.random.randint(width * 0.02, width * 0.05)
+
+                # Draw black line on the white mask
+
+                cv2.line(m, (x1, y1), (x2, y2), (1), thickness)
+            m = np.concatenate([m, m, m], axis=2)
+            m = (m > 0).astype(np.uint8)  # threshold due to interpolation
+            return m * 255
+
+    def resize(self, img, aspect_ratio_kept=True, fixed_size=False, centerCrop=False):
+
         if aspect_ratio_kept:
             imgh, imgw = img.shape[0:2]
             side = np.minimum(imgh, imgw)
             if fixed_size:
                 if centerCrop:
-                # center crop
+                    # center crop
                     j = (imgh - side) // 2
                     i = (imgw - side) // 2
                     img = img[j:j + side, i:i + side, ...]
@@ -136,11 +167,11 @@ class Dataset(torch.utils.data.Dataset):
     def load_list(self, path):
         if isinstance(path, str):
             if path[-3:] == "txt":
-                line = open(path,"r")
+                line = open(path, "r")
                 lines = line.readlines()
                 file_names = []
                 for line in lines:
-                    file_names.append("../../Dataset/Places2/train/data_256"+line.split(" ")[0])
+                    file_names.append("../../Dataset/Places2/train/data_256" + line.split(" ")[0])
                 return file_names
             if os.path.isdir(path):
                 path = list(glob.glob(path + '/*.jpg')) + list(glob.glob(path + '/*.png'))
@@ -153,14 +184,16 @@ class Dataset(torch.utils.data.Dataset):
                     return [path]
         return []
 
+
 def generate_stroke_mask(im_size, max_parts=15, maxVertex=25, maxLength=100, maxBrushWidth=24, maxAngle=360):
     mask = np.zeros((im_size[0], im_size[1], 1), dtype=np.float32)
     parts = random.randint(1, max_parts)
     for i in range(parts):
         mask = mask + np_free_form_mask(maxVertex, maxLength, maxBrushWidth, maxAngle, im_size[0], im_size[1])
     mask = np.minimum(mask, 1.0)
-    mask = np.concatenate([mask, mask, mask], axis = 2)
+    mask = np.concatenate([mask, mask, mask], axis=2)
     return mask
+
 
 def np_free_form_mask(maxVertex, maxLength, maxBrushWidth, maxAngle, h, w):
     mask = np.zeros((h, w, 1), np.float32)
