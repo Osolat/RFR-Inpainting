@@ -40,6 +40,7 @@ class Dataset(torch.utils.data.Dataset):
         return item
 
     def load_item(self, index):
+        print("I am here 1")
         img = imread(self.data[index])
         if self.training:
             img = self.resize(img)
@@ -47,13 +48,15 @@ class Dataset(torch.utils.data.Dataset):
             img = self.resize(img, True, True, True)
         # load mask
         mask = self.load_mask(img, index)
-        print(mask)
+        print("I am here 2")
+
         # augment data
         if self.training:
             if self.augment and np.random.binomial(1, 0.5) > 0:
                 img = img[:, ::-1, ...]
             if self.augment and np.random.binomial(1, 0.5) > 0:
                 mask = mask[:, ::-1, ...]
+        print("I am here 3")
 
         return self.to_tensor(img), self.to_tensor(mask)
 
