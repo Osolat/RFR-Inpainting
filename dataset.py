@@ -163,7 +163,7 @@ class Dataset(torch.utils.data.Dataset):
         img = np.array(Image.fromarray(img).resize(size=(self.target_size, self.target_size)))
         if img.ndim == 2:
             print("error")
-            img = np.concatenate((img,)*3, axis=-1)
+            img = np.stack((img,) * 3, axis=-1)
             print(img.shape)
         return img
 
