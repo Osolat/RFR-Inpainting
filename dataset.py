@@ -116,6 +116,7 @@ class Dataset(torch.utils.data.Dataset):
 
                 cv2.line(m, (x1, y1), (x2, y2), (1), thickness)
             m = np.concatenate([m, m, m], axis=2)
+            m = 1 - m
             m = (m > 0).astype(np.uint8)  # threshold due to interpolation
             return m * 255
 
