@@ -47,6 +47,7 @@ class Dataset(torch.utils.data.Dataset):
             img = self.resize(img, True, True, True)
         # load mask
         mask = self.load_mask(img, index)
+        print(mask)
         # augment data
         if self.training:
             if self.augment and np.random.binomial(1, 0.5) > 0:

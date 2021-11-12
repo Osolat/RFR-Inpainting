@@ -56,11 +56,9 @@ class RFRNetModel():
         s_time = time.time()
         while self.iter<iters:
             for items in train_loader:
-                print("I GOT HERE?")
+                print("I got here")
                 gt_images, masks = self.__cuda__(*items)
                 masked_images = gt_images * masks
-                print(gt_images)
-                print(masks)
                 self.forward(masked_images, masks, gt_images)
                 self.update_parameters()
                 self.iter += 1
