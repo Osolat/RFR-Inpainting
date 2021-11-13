@@ -40,7 +40,7 @@ class Dataset(torch.utils.data.Dataset):
 
     def load_item(self, index):
         # print("I am here 1")
-        img = imread(Image.open(self.data[index]).convert('RGB'))
+        img = imread(self.data[index])
         if self.training:
             img = self.resize(img)
         else:
@@ -162,6 +162,9 @@ class Dataset(torch.utils.data.Dataset):
         img = np.array(Image.fromarray(img).resize(size=(self.target_size, self.target_size)))
         if img.ndim == 2:
             img = np.stack((img,) * 3, axis=-1)
+        if img.shape[2] == 4:
+            print("Found something with alpha channel")
+            img = img[:, :, :3]
         return img
 
     def to_tensor(self, img):
