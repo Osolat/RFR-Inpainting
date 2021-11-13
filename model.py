@@ -58,43 +58,43 @@ class RFRNetModel():
             for items in train_loader:
                 gt_images, masks = self.__cuda__(*items)
                 masked_images = gt_images * masks
-                #print(gt_images.data.shape)
-                #print(masks.data.shape)
-                #print(masked_images.data.shape)
-        #         if image_save_path is not None and self.iter % 500 == 0:
-        #             masksView = torch.cat([masks], dim=1)
-        #             fake_B, mask = self.G(masked_images, masksView)
-        #             comp_B = fake_B * (1 - masksView) + gt_images * masksView
-        #             if not os.path.exists('{:s}/results'.format(image_save_path)):
-        #                 os.makedirs('{:s}/results'.format(image_save_path))
-        #             for k in range(comp_B.size(0)):
-        #                 grid = make_grid(comp_B[k:k + 1])
-        #                 file_path = '{:s}/results/img_{:d}.png'.format(image_save_path, self.iter)
-        #                 save_image(grid, file_path)
-        #
-        #                 grid = make_grid(masked_images[k:k + 1] + 1 - masksView[k:k + 1])
-        #                 file_path = '{:s}/results/masked_img_{:d}.png'.format(image_save_path, self.iter)
-        #                 save_image(grid, file_path)
-        #         self.forward(masked_images, masks, gt_images)
-        #         self.update_parameters()
-        #         self.iter += 1
-        #
-        #         if self.iter % 50 == 0:
-        #             e_time = time.time()
-        #             int_time = e_time - s_time
-        #             print("Iteration:%d, l1_loss:%.4f, time_taken:%.2f" % (self.iter, self.l1_loss_val / 50, int_time))
-        #             s_time = time.time()
-        #             self.l1_loss_val = 0.0
-        #
-        #         if self.iter % 5000 == 0:
-        #             if not os.path.exists('{:s}'.format(save_path)):
-        #                 os.makedirs('{:s}'.format(save_path))
-        #             save_ckpt('{:s}/g_{:d}.pth'.format(save_path, self.iter), [('generator', self.G)],
-        #                       [('optimizer_G', self.optm_G)], self.iter)
-        # if not os.path.exists('{:s}'.format(save_path)):
-        #     os.makedirs('{:s}'.format(save_path))
-        #     save_ckpt('{:s}/g_{:s}.pth'.format(save_path, self.iter), [('generator', self.G)],
-        #               [('optimizer_G', self.optm_G)], self.iter)
+                # print(gt_images.data.shape)
+                # print(masks.data.shape)
+                # print(masked_images.data.shape)
+                if image_save_path is not None and self.iter % 500 == 0:
+                    masksView = torch.cat([masks], dim=1)
+                    fake_B, mask = self.G(masked_images, masksView)
+                    comp_B = fake_B * (1 - masksView) + gt_images * masksView
+                    if not os.path.exists('{:s}/results'.format(image_save_path)):
+                        os.makedirs('{:s}/results'.format(image_save_path))
+                    for k in range(comp_B.size(0)):
+                        grid = make_grid(comp_B[k:k + 1])
+                        file_path = '{:s}/results/img_{:d}.png'.format(image_save_path, self.iter)
+                        save_image(grid, file_path)
+
+                        grid = make_grid(masked_images[k:k + 1] + 1 - masksView[k:k + 1])
+                        file_path = '{:s}/results/masked_img_{:d}.png'.format(image_save_path, self.iter)
+                        save_image(grid, file_path)
+                self.forward(masked_images, masks, gt_images)
+                self.update_parameters()
+                self.iter += 1
+
+                if self.iter % 50 == 0:
+                    e_time = time.time()
+                    int_time = e_time - s_time
+                    print("Iteration:%d, l1_loss:%.4f, time_taken:%.2f" % (self.iter, self.l1_loss_val / 50, int_time))
+                    s_time = time.time()
+                    self.l1_loss_val = 0.0
+
+                if self.iter % 5000 == 0:
+                    if not os.path.exists('{:s}'.format(save_path)):
+                        os.makedirs('{:s}'.format(save_path))
+                    save_ckpt('{:s}/g_{:d}.pth'.format(save_path, self.iter), [('generator', self.G)],
+                              [('optimizer_G', self.optm_G)], self.iter)
+        if not os.path.exists('{:s}'.format(save_path)):
+            os.makedirs('{:s}'.format(save_path))
+            save_ckpt('{:s}/g_{:s}.pth'.format(save_path, self.iter), [('generator', self.G)],
+                      [('optimizer_G', self.optm_G)], self.iter)
 
     def test(self, test_loader, result_save_path):
         self.G.eval()

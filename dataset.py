@@ -118,7 +118,9 @@ class Dataset(torch.utils.data.Dataset):
             m = np.concatenate([m, m, m], axis=2)
             m = 1 - m
             m = (m > 0).astype(np.uint8)  # threshold due to interpolation
-            return m * 255
+            m = m * 255
+            m = self.resize(m, False)
+            return m
 
     def resize(self, img, aspect_ratio_kept=True, fixed_size=False, centerCrop=False):
         if aspect_ratio_kept:
