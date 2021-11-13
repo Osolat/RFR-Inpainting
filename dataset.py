@@ -40,7 +40,7 @@ class Dataset(torch.utils.data.Dataset):
 
     def load_item(self, index):
         # print("I am here 1")
-        img = imread(self.data[index])
+        img = imread(Image.open(self.data[index]).convert('RGB'))
         if self.training:
             img = self.resize(img)
         else:
@@ -121,7 +121,6 @@ class Dataset(torch.utils.data.Dataset):
             return m * 255
 
     def resize(self, img, aspect_ratio_kept=True, fixed_size=False, centerCrop=False):
-        img = Image.open(img).convert('RGB')
         if aspect_ratio_kept:
             imgh, imgw = img.shape[0:2]
             side = np.minimum(imgh, imgw)
