@@ -121,7 +121,7 @@ class Dataset(torch.utils.data.Dataset):
             return m * 255
 
     def resize(self, img, aspect_ratio_kept=True, fixed_size=False, centerCrop=False):
-
+        img = Image.open(img).convert('RGB')
         if aspect_ratio_kept:
             imgh, imgw = img.shape[0:2]
             side = np.minimum(imgh, imgw)
