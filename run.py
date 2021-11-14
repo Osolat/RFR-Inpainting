@@ -37,4 +37,4 @@ def run():
 if __name__ == '__main__':
     #run()
     vgg16 = models.vgg16(pretrained=False)
-    vgg16.features.shape
+
