@@ -1,9 +1,9 @@
 import argparse
 import os
-from model import RFRNetModel
-from dataset import Dataset
+#from model import RFRNetModel
+#from dataset import Dataset
 from torch.utils.data import DataLoader
-
+import torchvision.models as models
 def run():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_root', type=str)
@@ -35,4 +35,6 @@ def run():
         model.train(dataloader, args.model_save_path, args.finetune, args.num_iters)
 
 if __name__ == '__main__':
-    run()
+    #run()
+    vgg16 = models.vgg16(pretrained=False)
+    vgg16.features.shape
