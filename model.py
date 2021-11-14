@@ -8,7 +8,7 @@ from modules.RFRNet import RFRNet, VGG16FeatureExtractor
 import os
 import time
 
-
+#Lol
 class RFRNetModel():
     def __init__(self):
         self.G = None
