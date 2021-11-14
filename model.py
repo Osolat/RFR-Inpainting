@@ -149,8 +149,9 @@ class RFRNetModel():
         real_B_feats = self.lossNet(real_B)
         fake_B_feats = self.lossNet(fake_B)
         comp_B_feats = self.lossNet(comp_B)
+        print(real_B_feats)
         print(len(real_B_feats))
-        print(real_B_feats[0].size().shape)
+        print(real_B_feats[0])
 
         tv_loss = self.TV_loss(comp_B * (1 - self.mask))
         style_loss = self.style_loss(real_B_feats, fake_B_feats) + self.style_loss(real_B_feats, comp_B_feats)
